@@ -1,5 +1,5 @@
 import ViewportObject from '@/ts/viewport';
-import { AbstractMesh} from 'babylonjs';
+import { AbstractMesh } from 'babylonjs';
 import Vue from 'vue'
 import Vuex from 'vuex'
 
@@ -16,19 +16,22 @@ export default new Vuex.Store<State>({
     selectedMesh: null
   }),
   mutations: {
-    setViewport: (state: State, viewport: ViewportObject)=> {
+    setViewport: (state: State, viewport: ViewportObject) => {
       state.viewport = viewport;
     },
-    setSelectedMesh: (state: State, selectedMesh: AbstractMesh | null)=> {
+    setSelectedMesh: (state: State, selectedMesh: AbstractMesh | null) => {
       state.selectedMesh = selectedMesh;
     }
   },
   getters: {
-    getActiveMesh: (state: State)=>{
-      if (state.selectedMesh){
-        console.log(state.selectedMesh)
-        return state.selectedMesh|| false
+    getActiveMesh: (state: State) => {
+      if (state.selectedMesh) {
+        return state.selectedMesh || false
       }
+    },
+    getViewport: (state: State) => {
+      console.log(state.viewport)
+      return state.viewport || false
     }
   }
 })
