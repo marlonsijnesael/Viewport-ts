@@ -1,5 +1,5 @@
 import ViewportObject from '@/ts/viewport';
-import { AbstractMesh, Viewport } from 'babylonjs';
+import { AbstractMesh} from 'babylonjs';
 import Vue from 'vue'
 import Vuex from 'vuex'
 

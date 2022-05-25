@@ -1,13 +1,11 @@
-import { AbstractMesh, Color3, EventState, Gizmo, GizmoManager, Mesh, Nullable, Scene } from "babylonjs";
-import { meshFragmentDeclaration } from "babylonjs/Shaders/ShadersInclude/meshFragmentDeclaration";
+import { AbstractMesh, Color3, GizmoManager } from "babylonjs";
 import ViewportObject from "./viewport";
-import store from "@/store";
 
 export default class InteractionManager {
 
     private gizmoManager!: GizmoManager;
     private viewport: ViewportObject;
-    private activeMesh!: AbstractMesh;
+    private selectedMesh!: AbstractMesh;
 
     constructor(viewport: ViewportObject,) {
         this.viewport = viewport
@@ -45,19 +43,23 @@ export default class InteractionManager {
     }
 
     onMeshClicked(pickedMesh: AbstractMesh): void{
-        this.setOutline(this.activeMesh, false);
-        this.activeMesh = pickedMesh;
+        //remove current outline (if any)
+        this.setOutline(this.selectedMesh, false);
+        
+        //set selected mesh to picked mesh
+        this.selectedMesh = pickedMesh;
+        this.setOutline(this.selectedMesh, true);
+        this.gizmoManager.attachToMesh(this.selectedMesh)
+
+        //notify viewport of changes
         this.viewport.setSelectedMesh(pickedMesh)
-        this.setOutline(this.activeMesh, true);
-        this.gizmoManager.attachToMesh(this.activeMesh)
     }
 
     onEmptyClicked(): void {
-        this.setOutline(this.activeMesh, false);
+        this.setOutline(this.selectedMesh, false);
         this.gizmoManager.attachToMesh(null)
         this.viewport.setSelectedMesh(null)
     }
-
 
 
     setOutline(mesh: AbstractMesh, enable: boolean): void {
