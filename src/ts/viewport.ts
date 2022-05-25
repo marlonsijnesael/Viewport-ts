@@ -1,4 +1,6 @@
-import { Scene, Engine, FreeCamera, HemisphericLight, Nullable, Vector3, Mesh } from 'babylonjs';
+import { Scene, Engine, FreeCamera, HemisphericLight, Nullable, Vector3, Mesh, PointerInfo, EventState, AbstractMesh } from 'babylonjs';
+import InteractionManager from './interactionManager';
+import store from '@/store';
 
 export default class ViewportObject {
     canvas: Nullable<HTMLCanvasElement>
@@ -7,6 +9,8 @@ export default class ViewportObject {
     camera!: Nullable<FreeCamera>;
     meshes!: Array<Mesh>;
     light!: Nullable<HemisphericLight>
+    interactionManager!: InteractionManager;
+    selectedMesh!: AbstractMesh|null;
 
     constructor(canvasId: string, addSampleObjects: boolean) {
         this.canvas = document.getElementById(canvasId) as HTMLCanvasElement;
@@ -14,7 +18,14 @@ export default class ViewportObject {
 
         if (!addSampleObjects) return;
         this.addSampleObjects()
+    }
 
+    get getScene() {
+        return this.scene;
+    }
+
+    get getSelectedMesh() {
+        return this.selectedMesh
     }
 
     init(): void {
@@ -23,9 +34,17 @@ export default class ViewportObject {
         this.camera = new FreeCamera('mainCamera', new Vector3(0, 5, -10), this.scene)
         this.camera.setTarget(Vector3.Zero());
         this.camera.attachControl(this.canvas, false);
+        this.interactionManager = new InteractionManager(this);
 
         this.light = new HemisphericLight('light1', new Vector3(0, 1, 0), this.scene);
         this.render();
+
+        store.commit('setViewport', this);
+    }
+
+    setSelectedMesh(mesh: AbstractMesh|null): void {
+        this.selectedMesh = mesh;
+        store.commit('setSelectedMesh', mesh);
     }
 
     addSampleObjects(): void {
@@ -39,6 +58,10 @@ export default class ViewportObject {
         this.engine.runRenderLoop(() => {
             this.scene.render();
         });
+    }
+
+    addPointerCallback(callback: (eventData: PointerInfo, eventState: EventState) => void) {
+        this.scene.onPointerObservable.add(callback);
     }
 }
 
