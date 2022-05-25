@@ -25,9 +25,11 @@ export default class Viewport extends Vue {
   top:0;
   left:0;
   height: 100%;
+  width: 100%;
+  background: black;
   &__canvas{
     height: inherit;
-    widows: inherit;
+    width: inherit;
     outline: none;
   }
 }

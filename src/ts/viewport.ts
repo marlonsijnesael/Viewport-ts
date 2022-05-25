@@ -8,7 +8,7 @@ export default class ViewportObject {
     meshes!: Array<Mesh>;
     light!: Nullable<HemisphericLight>
 
-    constructor(canvasId: string, addSampleObjects:boolean) {
+    constructor(canvasId: string, addSampleObjects: boolean) {
         this.canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         this.init()
 
@@ -18,22 +18,27 @@ export default class ViewportObject {
     }
 
     init(): void {
-        this.engine = new Engine(this.canvas, true, {preserveDrawingBuffer: true, stencil: true});
-        this.scene =  new Scene(this.engine);
-        this.camera = new FreeCamera('mainCamera', new Vector3(0,5,-10), this.scene)
+        this.engine = new Engine(this.canvas, true, { preserveDrawingBuffer: true, stencil: true });
+        this.scene = new Scene(this.engine);
+        this.camera = new FreeCamera('mainCamera', new Vector3(0, 5, -10), this.scene)
         this.camera.setTarget(Vector3.Zero());
-        this.camera.attachControl( this.canvas, false);
+        this.camera.attachControl(this.canvas, false);
 
         this.light = new HemisphericLight('light1', new Vector3(0, 1, 0), this.scene);
-        
-        console.log(this)
+        this.render();
     }
 
     addSampleObjects(): void {
-          const sphere = Mesh.CreateSphere('sphere1', 16, 2, this.scene, false, Mesh.FRONTSIDE);
-          sphere.position.y = 1;
-          const ground = Mesh.CreateGround('ground1', 6, 6, 2, this.scene, false);
-          this.meshes = [sphere, ground]
+        const sphere = Mesh.CreateSphere('sphere1', 16, 2, this.scene, false, Mesh.FRONTSIDE);
+        sphere.position.y = 1;
+        const ground = Mesh.CreateGround('ground1', 6, 6, 2, this.scene, false);
+        this.meshes = [sphere, ground]
     }
-  }
+
+    render(): void {
+        this.engine.runRenderLoop(() => {
+            this.scene.render();
+        });
+    }
+}
 

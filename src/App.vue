@@ -14,9 +14,10 @@
   padding:0;
   margin: 0;
   box-sizing: border-box;
-  height: 100%;
-  widows: 100%;
+  height: 100vh;
+  width: 100vw;
   overflow: hidden;
+  background-clip: black;
 }
 
 #nav {
