@@ -30,7 +30,6 @@ export default new Vuex.Store<State>({
       }
     },
     getViewport: (state: State) => {
-      console.log(state.viewport)
       return state.viewport || false
     }
   }

@@ -12,11 +12,20 @@
           :label="'position'"
           :vec="$store.getters.getActiveMesh.position"
         ></InputVector3>
-        <InputColor v-model="$store.getters.getActiveMesh.material.diffuseColor"></InputColor>
+        <InputColor
+          v-model="$store.getters.getActiveMesh.material.diffuseColor"
+          :initialColor="$store.getters.getActiveMesh.material.diffuseColor"
+          :label="'material color'"
+        ></InputColor>
       </Propertiesdrawer>
 
-      <Propertiesdrawer v-else>
+      <Propertiesdrawer v-else-if="viewportInstance">
         <h1>Scene::</h1>
+        <InputColor
+          v-model="viewportInstance.scene.clearColor"
+          :initialColor="viewportInstance.scene.clearColor"
+          :label="'sky color'"
+        ></InputColor>
       </Propertiesdrawer>
 
       <!-- <div style="top: 100px">
@@ -34,13 +43,12 @@ import InputVector3 from "@/components/InputVector3.vue";
 import InputString from "@/components/InputString.vue";
 import InputColor from "@/components/InputColor.vue";
 
-
 @Component({
   components: {
     Propertiesdrawer,
     InputVector3,
     InputString,
-    InputColor
+    InputColor,
   },
 })
 export default class Viewport extends Vue {
@@ -56,7 +64,6 @@ export default class Viewport extends Vue {
     this.$store.commit("setViewport", this.viewportInstance);
     console.log(this.viewportInstance.selectedMesh);
   }
-  
 }
 </script>
 
