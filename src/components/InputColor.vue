@@ -8,15 +8,20 @@
         <span v-else>&#x25BC;</span>
       </button>
     </div>
-
-    <div class="input-colorpicker__row" v-if="show">
+    <div class="input-colorpicker__row" v-if="showPicker">
       <ColorPicker
-        :color="color"
+        :color="computedCol"
         :onStartChange="(c) => onChange(c)"
         :onChange="(c) => onChange(c, 'change')"
         :onEndChange="(c) => onChange(c, 'end')"
       />
     </div>
+    <button
+      v-else
+      @click="onClick"
+      class="input-colorpicker__preview"
+      :style="`background-color:${backgroundStyle}`"
+    ></button>
   </div>
 </template>
 
@@ -33,44 +38,69 @@ import { ColorPicker } from "vue-color-gradient-picker";
 export default class StringInput extends Vue {
   @Prop({ required: true }) initialColor!: Color3;
   @Prop({ required: false }) label!: string;
-  color!: any;
-  show = false;
+  @Prop({ required: true }) value!: string;
+  @Prop({ required: true }) mutationProp!: string;
+  private color!: any;
+  private show = false;
 
   data() {
     return {
       placeholderStr: "",
-      color: {
-        red: 255,
-        green: 0,
-        blue: 0,
-        alpha: 1,
-      },
+      color: {},
     };
+  }
+
+  get computedCol() {
+    return this.color3ToRGB();
+  }
+
+  get backgroundStyle() {
+    return `rgb(${this.computedCol.red},${this.computedCol.green},${this.computedCol.blue})`;
+  }
+
+  get showPicker() {
+    return this.show;
+  }
+
+  set showPicker(value) {
+    this.show = value;
   }
 
   mounted() {
     console.log(this.color);
-    this.color = {
+    this.color = this.color3ToRGB();
+  }
+
+  deactivated() {
+    alert("hi");
+  }
+
+  color3ToRGB() {
+    return {
       red: this.initialColor.r * 255,
       green: this.initialColor.g * 255,
       blue: this.initialColor.b * 255,
     };
-    console.log(this.color);
+  }
+
+  RGBToColor3() {
+    return new Color3(
+      this.color.red / 255,
+      this.color.green / 255,
+      this.color.blue / 255
+    );
   }
 
   onChange(attrs: any, name: any) {
     this.color = { ...attrs };
     console.log(this.color.red / 255, this.color.green / 255, this.color.blue / 255);
-    let rgb = new Color3(
-      this.color.red / 255,
-      this.color.green / 255,
-      this.color.blue / 255
-    );
+    let rgb = this.RGBToColor3();
     this.$emit("input", rgb);
+    this.$store.commit(this.mutationProp, rgb);
   }
 
   onClick() {
-    this.show = !this.show;
+    this.showPicker = this.show ? false : true;
   }
 }
 </script>
@@ -123,6 +153,20 @@ export default class StringInput extends Vue {
     background-color: #161819;
     color: #ffffff;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.39), 0 -1px 1px #161819, 0 1px 0 #161819;
+  }
+
+  &__preview {
+    cursor: pointer;
+    border: none;
+    border: 1px solid transparent;
+    border-top: none;
+    border-bottom: 1px solid #222;
+    background-color: #161819;
+    color: #ffffff;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.39), 0 -1px 1px #161819, 0 1px 0 #161819;
+    border-radius: 4px;
+    height: 32px;
+    width: 100%;
   }
   .ui-color-picker {
     background-color: transparent;

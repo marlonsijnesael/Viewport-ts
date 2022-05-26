@@ -15,17 +15,13 @@
         <InputColor
           v-model="$store.getters.getActiveMesh.material.diffuseColor"
           :initialColor="$store.getters.getActiveMesh.material.diffuseColor"
-          :label="'material color'"
+          label="material color"
+          mutationProp="setSelectedMeshColor"
         ></InputColor>
       </Propertiesdrawer>
 
       <Propertiesdrawer v-else-if="viewportInstance">
-        <h1>Scene::</h1>
-        <InputColor
-          v-model="viewportInstance.scene.clearColor"
-          :initialColor="viewportInstance.scene.clearColor"
-          :label="'sky color'"
-        ></InputColor>
+        <SceneProperties />
       </Propertiesdrawer>
 
       <!-- <div style="top: 100px">
@@ -42,6 +38,8 @@ import Propertiesdrawer from "@/components/PropertiesDrawer.vue";
 import InputVector3 from "@/components/InputVector3.vue";
 import InputString from "@/components/InputString.vue";
 import InputColor from "@/components/InputColor.vue";
+import InputBoolean from "@/components/InputBoolean.vue";
+import SceneProperties from "@/components/SceneProperties.vue";
 
 @Component({
   components: {
@@ -49,6 +47,8 @@ import InputColor from "@/components/InputColor.vue";
     InputVector3,
     InputString,
     InputColor,
+    InputBoolean,
+    SceneProperties,
   },
 })
 export default class Viewport extends Vue {
@@ -60,9 +60,12 @@ export default class Viewport extends Vue {
     };
   }
   mounted() {
-    this.viewportInstance = new ViewportObject("viewport__renderCanvas", true);
-    this.$store.commit("setViewport", this.viewportInstance);
-    console.log(this.viewportInstance.selectedMesh);
+    if (!this.$store.getters.getViewport) {
+      this.viewportInstance = new ViewportObject("viewport__renderCanvas", true);
+      this.$store.commit("setViewport", this.viewportInstance);
+    } else {
+      this.viewportInstance = this.$store.getters.getViewport;
+    }
   }
 }
 </script>

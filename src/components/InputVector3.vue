@@ -27,7 +27,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 export default class InputVector3 extends Vue {
   @Prop({ required: true }) vec!: Vector3;
   @Prop({ required: false }) label!: string;
-  show = false;
+  show = true;
 
   onClick() {
     this.show = !this.show;
